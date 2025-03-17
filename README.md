@@ -98,6 +98,21 @@ DropdownMenuItems({
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Connect with me
+
+- GitHub: [Your GitHub Profile](https://github.com/HKAY1)
+- LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/harsh-kumar-b8034020a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+
+## Support My Work
+
+If you find this package useful, consider supporting me with a coffee. Your support helps me maintain and improve this package! ☕️
+
+<div style="align:center">
+  <a href="https://buymeacoffee.com/harsh001" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;">
+  </a>
+</div>
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
