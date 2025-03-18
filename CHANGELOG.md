@@ -9,3 +9,6 @@
 ## 0.0.3
 
 * updated pubspec
+
+## 0.0.3+1
+* updated repo link
