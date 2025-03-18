@@ -1,0 +1,20 @@
+name: searchable_textfeild
+description: "A simple textfeild which can be used to search the data in the list or can be used as simple dropdown widget"
+version: 0.0.3
+homepage: https://github.com/HKAY1/searchable_textfield/tree/master
+repository: https://github.com/HKAY1/searchable_textfield/tree/master
+
+environment:
+  sdk: ^3.7.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
