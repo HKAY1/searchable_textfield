@@ -24,6 +24,16 @@ A customizable Flutter widget that combines the functionality of a TextField wit
 - Customizable appearance
 - Form validation support
 
+## Support My Work
+
+If you find this package useful, consider supporting me with a coffee. Your support helps me maintain and improve this package! ☕️
+
+<div style="align:center">
+  <a href="https://buymeacoffee.com/harsh001" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;">
+  </a>
+</div>
+
 ## Installation
 
 Add this to your package's `pubspec.yaml` file:
@@ -84,14 +94,43 @@ SearchableTextField(
 - `validator`: Form validation function
 - `isObscured`: Toggle password visibility
 - `textFeildDecorator`: Custom input decoration
+- `dropdownDecoration`: Custom BoxDecoration for dropdown container
+- `dropdownItemStyle`: TextStyle for dropdown items
+- `dropdownBackgroundColor`: Background color of dropdown
+- `dropdownItemPadding`: Padding for dropdown items
+- `dropdownElevation`: Elevation of dropdown container
 
-### DropdownMenuItems
+## Usage with Custom Styling
 
 ```dart
-DropdownMenuItems({
-  required String lable,
-  required String value,
-})
+SearchableTextField(
+  controller: TextEditingController(),
+  enabled: true,
+  isDropdown: true,
+  isObscured: false,
+  items: [
+    DropdownMenuItems(lable: "Item 1", value: "1"),
+    DropdownMenuItems(lable: "Item 2", value: "2"),
+  ],
+  dropdownDecoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(8),
+    border: Border.all(color: Colors.grey),
+  ),
+  dropdownItemStyle: TextStyle(
+    color: Colors.blue,
+    fontSize: 16,
+  ),
+  dropdownBackgroundColor: Colors.grey[100],
+  dropdownItemPadding: EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 15,
+  ),
+  dropdownElevation: 4,
+  onChanged: (value) {
+    print("Selected value: $value");
+  },
+)
 ```
 
 ## Contributing
@@ -102,16 +141,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - GitHub: [Your GitHub Profile](https://github.com/HKAY1)
 - LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/harsh-kumar-b8034020a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
-
-## Support My Work
-
-If you find this package useful, consider supporting me with a coffee. Your support helps me maintain and improve this package! ☕️
-
-<div style="align:center">
-  <a href="https://buymeacoffee.com/harsh001" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;">
-  </a>
-</div>
 
 ## License
 
