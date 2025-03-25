@@ -12,3 +12,10 @@
 
 ## 0.0.3+1
 * updated repo link
+
+## 0.1.0
+* added style support of dropdown menu and items
+* dynamic height for the menu
+* dropdown style changed from list to overlay
+* minor bug fix
+* Readme updated
