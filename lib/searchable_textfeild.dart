@@ -13,7 +13,6 @@ import 'package:searchable_textfeild/dropdown_menu_items.dart';
 /// - [items] should be provided if using predefined dropdown values.
 /// - Supports pagination for handling large datasets.
 /// TODO: Add Multi select support.
-/// TODO : Add custom decoration support.
 /// TODO: Add loading indicator.
 /// TODO: Add empty state.
 /// TODO: Add all textfeild parameters.
