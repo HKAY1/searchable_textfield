@@ -19,3 +19,6 @@
 * dropdown style changed from list to overlay
 * minor bug fix
 * Readme updated
+
+## 0.1.1
+* updated readme
