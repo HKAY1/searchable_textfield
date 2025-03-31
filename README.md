@@ -24,6 +24,16 @@ A customizable Flutter widget that combines the functionality of a TextField wit
 - Customizable appearance
 - Form validation support
 
+## Upcoming Updates
+
+- Multi-select support
+- Loading indicator for API-based searches
+- Empty state handling with customizable empty state widget
+- Additional TextField parameters support
+- Custom ui option for dropdown items
+- Improved decoration customization options
+- Performance optimizations for large datasets
+
 ## Support My Work
 
 If you find this package useful, consider supporting me with a coffee. Your support helps me maintain and improve this package! ☕️
