@@ -25,3 +25,6 @@
 
 ## 0.1.2
 * Added new feature appendable items
+
+## 0.1.3
+* bug fixes
