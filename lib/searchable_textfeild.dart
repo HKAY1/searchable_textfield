@@ -365,7 +365,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5),
+
                     // Appendable items section
                     if (widget.appendableItems != null &&
                         widget.appendableItems!.isNotEmpty)
