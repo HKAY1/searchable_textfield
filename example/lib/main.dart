@@ -32,6 +32,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<List<DropdownMenuItems>> getPostsData({
+    String? filter,
+    int? page,
+    int? limit,
+  }) async {
+    // Simulate API call
+    await Future.delayed(Duration(seconds: 2));
+    return [
+      DropdownMenuItems(lable: "Post 1", value: "1"),
+      DropdownMenuItems(lable: "Post 2", value: "2"),
+      DropdownMenuItems(lable: "Post 3", value: "3"),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,10 +76,38 @@ class _MyHomePageState extends State<MyHomePage> {
               DropdownMenuItems(lable: "Orange", value: "5"),
               DropdownMenuItems(lable: "Blue Berry", value: "6"),
             ],
+            appendableItems: [
+              ListTile(
+                leading: Icon(Icons.add),
+                title: Text("Add New Item"),
+                onTap: () {
+                  print("Add New Item tapped");
+                },
+              ),
+            ],
           ),
           SizedBox(height: 30),
           Text("Dropdown with Api Search"),
           SizedBox(height: 10),
+          SearchableTextField(
+            controller: TextEditingController(),
+            enabled: true,
+            isObscured: false,
+            isDropdown: true,
+            getItems: getPostsData,
+            loadingWidget: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 15,
+                  height: 15,
+                  child: CircularProgressIndicator(strokeWidth: 1),
+                ),
+                SizedBox(width: 10),
+                Text('Loading...', style: TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
         ],
       ),
     );

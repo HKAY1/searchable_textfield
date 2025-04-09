@@ -22,3 +22,6 @@
 
 ## 0.1.1
 * updated readme
+
+## 0.1.2
+* Added new feature appendable items

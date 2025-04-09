@@ -23,6 +23,7 @@ A customizable Flutter widget that combines the functionality of a TextField wit
 - Pagination for large datasets
 - Customizable appearance
 - Form validation support
+- **Appendable items**: Add a separate list of widgets below the dropdown with dynamic height adjustment
 
 ## Upcoming Updates
 
@@ -30,7 +31,7 @@ A customizable Flutter widget that combines the functionality of a TextField wit
 - Loading indicator for API-based searches
 - Empty state handling with customizable empty state widget
 - Additional TextField parameters support
-- Custom ui option for dropdown items
+- Custom UI option for dropdown items
 - Improved decoration customization options
 - Performance optimizations for large datasets
 
@@ -73,7 +74,9 @@ SearchableTextField(
 )
 ```
 
-API-based search example:
+### Appendable Items Example
+
+You can add a separate list of widgets below the dropdown using the `appendableItems` property. These widgets will be displayed in a separate section with dynamic height adjustment.
 
 ```dart
 SearchableTextField(
@@ -81,13 +84,27 @@ SearchableTextField(
   enabled: true,
   isDropdown: true,
   isObscured: false,
-  getItems: ({page, filter, limit}) async {
-    // Implement your API call here
-    return yourApiCall(page: page, searchText: filter, pageSize: limit);
-  },
-  onChanged: (value) {
-    print("Selected value: $value");
-  },
+  items: [
+    DropdownMenuItems(lable: "Apple", value: "1"),
+    DropdownMenuItems(lable: "Mango", value: "2"),
+  ],
+  appendableItems: [
+    ListTile(
+      leading: Icon(Icons.add),
+      title: Text("Add New Item"),
+      onTap: () {
+        print("Add New Item tapped");
+      },
+    ),
+    Divider(),
+    ListTile(
+      leading: Icon(Icons.info),
+      title: Text("About"),
+      onTap: () {
+        print("About tapped");
+      },
+    ),
+  ],
 )
 ```
 
@@ -109,6 +126,11 @@ SearchableTextField(
 - `dropdownBackgroundColor`: Background color of dropdown
 - `dropdownItemPadding`: Padding for dropdown items
 - `dropdownElevation`: Elevation of dropdown container
+- `loadingWidget`: Custom widget to show while loading items
+- `loadingIndicatorColor`: Color of the default loading indicator
+- `loadingIndicatorSize`: Size of the default loading indicator (default: 20)
+- `loadingIndicatorStrokeWidth`: Stroke width of the default loading indicator (default: 2)
+- `appendableItems`: A list of widgets to display in a separate section below the dropdown
 
 ## Usage with Custom Styling
 

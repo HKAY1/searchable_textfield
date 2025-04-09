@@ -43,6 +43,11 @@ class SearchableTextField<T> extends StatefulWidget {
   final Color? dropdownBackgroundColor;
   final EdgeInsetsGeometry dropdownItemPadding;
   final double? dropdownElevation;
+  final Widget? loadingWidget;
+  final Color? loadingIndicatorColor;
+  final double loadingIndicatorSize;
+  final double loadingIndicatorStrokeWidth;
+  final List<Widget>? appendableItems;
 
   const SearchableTextField({
     super.key,
@@ -54,7 +59,7 @@ class SearchableTextField<T> extends StatefulWidget {
     required this.enabled,
     this.style,
     this.isDropdown = false,
-    required this.isObscured,
+    this.isObscured = false,
     this.focusNode,
     this.textFeildDecorator,
     this.maxLines = 1,
@@ -72,6 +77,11 @@ class SearchableTextField<T> extends StatefulWidget {
       vertical: 12,
     ),
     this.dropdownElevation = 8,
+    this.loadingWidget,
+    this.loadingIndicatorColor,
+    this.loadingIndicatorSize = 20,
+    this.loadingIndicatorStrokeWidth = 2,
+    this.appendableItems = const [],
   }) : assert(
          !(isDropdown && (items == null || items == const [])),
          'Items cannot be empty when isDropdown is true.',
@@ -95,6 +105,9 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
 
   OverlayEntry? _overlayEntry;
   final LayerLink _layerLink = LayerLink();
+
+  bool _isNextLoading = false;
+  bool _isPrevLoading = false;
 
   @override
   void initState() {
@@ -135,57 +148,48 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
   }
 
   Future<void> _loadNextPage() async {
-    if (widget.getItems == null) return;
+    if (widget.getItems == null || _isNextLoading) return;
 
-    final nextPage = _page + 1;
-    final nextItems = await widget.getItems!(
-      page: nextPage,
-      filter: filter,
-      limit: _loadSize,
-    );
+    setState(() => _isNextLoading = true);
+    try {
+      debugPrint("Loading next page: $_page");
+      final nextItems = await widget.getItems!(
+        page: _page + 1,
+        filter: filter,
+        limit: _loadSize,
+      );
 
-    if (nextItems.isNotEmpty) {
-      setState(() {
-        _filteredItems.removeRange(0, _loadSize);
-        _filteredItems.addAll(nextItems.cast<DropdownMenuItems>());
-        _page = nextPage;
-      });
-
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(
-          _scrollController.position.pixels -
-              (MediaQuery.sizeOf(context).height * 0.3),
-        );
+      if (nextItems.isNotEmpty) {
+        setState(() {
+          _filteredItems.addAll(nextItems.cast<DropdownMenuItems>());
+          _page++;
+        });
       }
+    } finally {
+      setState(() => _isNextLoading = false);
     }
   }
 
   Future<void> _loadPreviousPage() async {
-    if (widget.getItems == null || _page < 3) return;
+    if (widget.getItems == null || _page <= 0 || _isPrevLoading) return;
 
-    final prevPage = _page - 3;
-    final items = await widget.getItems!(
-      page: prevPage,
-      filter: filter,
-      limit: _loadSize,
-    );
+    setState(() => _isPrevLoading = true);
+    try {
+      debugPrint("Loading prev page: $_page");
+      final items = await widget.getItems!(
+        page: _page - 1,
+        filter: filter,
+        limit: _loadSize,
+      );
 
-    if (items.isNotEmpty) {
-      setState(() {
-        _filteredItems.insertAll(0, items.cast<DropdownMenuItems>());
-        _filteredItems.removeRange(
-          _filteredItems.length - _loadSize,
-          _filteredItems.length,
-        );
-        _page -= 1;
-      });
-
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(
-          _scrollController.position.pixels +
-              (MediaQuery.sizeOf(context).height * 0.3),
-        );
+      if (items.isNotEmpty) {
+        setState(() {
+          _filteredItems.insertAll(0, items.cast<DropdownMenuItems>());
+          _page--;
+        });
       }
+    } finally {
+      setState(() => _isPrevLoading = false);
     }
   }
 
@@ -240,16 +244,46 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
     _overlayEntry = null;
   }
 
+  Widget _buildLoadingIndicator() {
+    return widget.loadingWidget ??
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: widget.loadingIndicatorSize,
+              width: widget.loadingIndicatorSize,
+              child: CircularProgressIndicator(
+                strokeWidth: widget.loadingIndicatorStrokeWidth,
+                color: widget.loadingIndicatorColor,
+              ),
+            ),
+          ),
+        );
+  }
+
   void _showOverlay() {
     _removeOverlay();
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
 
-    // Update height calculations
-    final itemHeight = 48.0; // height per item
-    final contentHeight = _filteredItems.length * itemHeight;
-    final maxHeight = MediaQuery.sizeOf(context).height * 0.3;
-    final actualHeight = contentHeight < maxHeight ? contentHeight : maxHeight;
+    // Calculate dropdown height
+    final dropdownItemHeight = 48.0; // height per dropdown item
+    final dropdownContentHeight = _filteredItems.length * dropdownItemHeight;
+    final dropdownMaxHeight = MediaQuery.sizeOf(context).height * 0.3;
+    final dropdownActualHeight =
+        dropdownContentHeight < dropdownMaxHeight
+            ? dropdownContentHeight
+            : dropdownMaxHeight;
+
+    // Calculate appendable items height
+    final appendableItemHeight = 48.0; // height per appendable item
+    final appendableContentHeight =
+        (widget.appendableItems?.length ?? 0) * appendableItemHeight;
+    final appendableMaxHeight = MediaQuery.sizeOf(context).height * 0.2;
+    final appendableActualHeight =
+        appendableContentHeight < appendableMaxHeight
+            ? appendableContentHeight
+            : appendableMaxHeight;
 
     _overlayEntry = OverlayEntry(
       builder:
@@ -268,54 +302,97 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                 link: _layerLink,
                 showWhenUnlinked: false,
                 offset: Offset(0, size.height + 5),
-                child: Material(
-                  elevation: widget.dropdownElevation ?? 8,
-                  borderRadius: BorderRadius.circular(4),
-                  clipBehavior: Clip.antiAlias,
-                  child: Container(
-                    width: size.width,
-                    height: actualHeight,
-                    decoration:
-                        widget.dropdownDecoration ??
-                        BoxDecoration(
-                          color: widget.dropdownBackgroundColor,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                    child: ScrollConfiguration(
-                      behavior: ScrollConfiguration.of(
-                        context,
-                      ).copyWith(scrollbars: false),
-                      child: CupertinoScrollbar(
-                        controller: _scrollController,
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          controller: _scrollController,
-                          itemCount: _filteredItems.length,
-                          itemExtent: itemHeight,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                textController.text =
-                                    _filteredItems[index].value;
-                                widget.onChanged?.call(
-                                  _filteredItems[index].value.toString(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Dropdown section
+                    Material(
+                      elevation: widget.dropdownElevation ?? 8,
+                      borderRadius: BorderRadius.circular(4),
+                      clipBehavior: Clip.antiAlias,
+                      child: Container(
+                        width: size.width,
+                        height: dropdownActualHeight,
+                        decoration:
+                            widget.dropdownDecoration ??
+                            BoxDecoration(
+                              color: widget.dropdownBackgroundColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                        child: ScrollConfiguration(
+                          behavior: ScrollConfiguration.of(
+                            context,
+                          ).copyWith(scrollbars: false),
+                          child: CupertinoScrollbar(
+                            controller: _scrollController,
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              controller: _scrollController,
+                              itemCount:
+                                  _filteredItems.length +
+                                  (_isNextLoading ? 1 : 0) +
+                                  (_isPrevLoading ? 1 : 0),
+                              itemExtent: dropdownItemHeight,
+                              itemBuilder: (context, index) {
+                                if (_isPrevLoading && index == 0) {
+                                  return _buildLoadingIndicator();
+                                }
+                                if (_isNextLoading &&
+                                    index == _filteredItems.length) {
+                                  return _buildLoadingIndicator();
+                                }
+                                return InkWell(
+                                  onTap: () {
+                                    textController.text =
+                                        _filteredItems[index].value;
+                                    widget.onChanged?.call(
+                                      _filteredItems[index].value.toString(),
+                                    );
+                                    setState(() => _isExpanded = false);
+                                    _removeOverlay();
+                                  },
+                                  child: Padding(
+                                    padding: widget.dropdownItemPadding,
+                                    child: Text(
+                                      _filteredItems[index].lable,
+                                      style: widget.dropdownItemStyle,
+                                    ),
+                                  ),
                                 );
-                                setState(() => _isExpanded = false);
-                                _removeOverlay();
                               },
-                              child: Padding(
-                                padding: widget.dropdownItemPadding,
-                                child: Text(
-                                  _filteredItems[index].lable,
-                                  style: widget.dropdownItemStyle,
-                                ),
-                              ),
-                            );
-                          },
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 5),
+                    // Appendable items section
+                    if (widget.appendableItems != null &&
+                        widget.appendableItems!.isNotEmpty)
+                      Material(
+                        elevation: widget.dropdownElevation ?? 4,
+                        borderRadius: BorderRadius.circular(4),
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          width: size.width,
+                          height: appendableActualHeight,
+                          decoration:
+                              widget.dropdownDecoration ??
+                              BoxDecoration(
+                                color: widget.dropdownBackgroundColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: widget.appendableItems!.length,
+                            itemExtent: appendableItemHeight,
+                            itemBuilder: (context, index) {
+                              return widget.appendableItems![index];
+                            },
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],
