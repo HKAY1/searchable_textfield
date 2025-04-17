@@ -108,6 +108,39 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
+          const SizedBox(height: 30),
+          const Text("Multi-Select Dropdown with Search"),
+          const SizedBox(height: 10),
+          SearchableTextField(
+            controller: TextEditingController(),
+            enabled: true,
+            isDropdown: true,
+            isMultiSelect: true,
+            checkboxActiveColor: Colors.blue,
+            checkboxCheckColor: Colors.white,
+            selectedItemStyle: const TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+            ),
+            maxSelections: 3, // Limit to 3 selections
+            selectionSeparator: ' | ', // Custom separator
+            selectionIndicator: const Icon(
+              Icons.check_circle_outline,
+              size: 16,
+              color: Colors.blue,
+            ),
+            items: [
+              DropdownMenuItems(lable: "Red", value: "1"),
+              DropdownMenuItems(lable: "Blue", value: "2"),
+              DropdownMenuItems(lable: "Green", value: "3"),
+              DropdownMenuItems(lable: "Yellow", value: "4"),
+              DropdownMenuItems(lable: "Purple", value: "5"),
+              DropdownMenuItems(lable: "Orange", value: "6"),
+            ],
+            onChanged: (value) {
+              print('Selected colors: $value');
+            },
+          ),
         ],
       ),
     );

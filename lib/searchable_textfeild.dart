@@ -12,7 +12,6 @@ import 'package:searchable_textfeild/dropdown_menu_items.dart';
 /// - If used as a dropdown with search, [getItems] should be defined for API-based search.
 /// - [items] should be provided if using predefined dropdown values.
 /// - Supports pagination for handling large datasets.
-/// TODO: Add Multi select support.
 /// TODO: Add loading indicator.
 /// TODO: Add empty state.
 /// TODO: Add all textfeild parameters.
@@ -48,6 +47,13 @@ class SearchableTextField<T> extends StatefulWidget {
   final double loadingIndicatorSize;
   final double loadingIndicatorStrokeWidth;
   final List<Widget>? appendableItems;
+  final bool isMultiSelect;
+  final Color? checkboxActiveColor;
+  final Color? checkboxCheckColor;
+  final TextStyle? selectedItemStyle;
+  final int? maxSelections;
+  final String selectionSeparator;
+  final Widget? selectionIndicator;
 
   const SearchableTextField({
     super.key,
@@ -82,6 +88,13 @@ class SearchableTextField<T> extends StatefulWidget {
     this.loadingIndicatorSize = 20,
     this.loadingIndicatorStrokeWidth = 2,
     this.appendableItems = const [],
+    this.isMultiSelect = false,
+    this.checkboxActiveColor,
+    this.checkboxCheckColor,
+    this.selectedItemStyle,
+    this.maxSelections,
+    this.selectionSeparator = ', ',
+    this.selectionIndicator,
   }) : assert(
          !(isDropdown && (items == null || items == const [])),
          'Items cannot be empty when isDropdown is true.',
@@ -108,6 +121,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
 
   bool _isNextLoading = false;
   bool _isPrevLoading = false;
+  final Set<DropdownMenuItems> _selectedItems = {};
 
   @override
   void initState() {
@@ -261,6 +275,20 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
         );
   }
 
+  void _updateTextController() {
+    if (widget.isMultiSelect) {
+      textController.text = _selectedItems
+          .map((item) => item.lable)
+          .join(widget.selectionSeparator);
+      widget.onChanged?.call(textController.text);
+    }
+  }
+
+  bool _canAddMoreSelections() {
+    return widget.maxSelections == null ||
+        _selectedItems.length < widget.maxSelections!;
+  }
+
   void _showOverlay() {
     _removeOverlay();
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -341,24 +369,100 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                                     index == _filteredItems.length) {
                                   return _buildLoadingIndicator();
                                 }
-                                return InkWell(
-                                  onTap: () {
-                                    textController.text =
-                                        _filteredItems[index].value;
-                                    widget.onChanged?.call(
-                                      _filteredItems[index].value.toString(),
-                                    );
-                                    setState(() => _isExpanded = false);
-                                    _removeOverlay();
-                                  },
-                                  child: Padding(
-                                    padding: widget.dropdownItemPadding,
-                                    child: Text(
-                                      _filteredItems[index].lable,
-                                      style: widget.dropdownItemStyle,
+
+                                final item = _filteredItems[index];
+                                if (widget.isMultiSelect) {
+                                  return InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (_selectedItems.contains(item)) {
+                                          _selectedItems.remove(item);
+                                        } else if (_canAddMoreSelections()) {
+                                          _selectedItems.add(item);
+                                        }
+                                        _updateTextController();
+                                        _removeOverlay();
+                                        _showOverlay();
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: Checkbox(
+                                              value: _selectedItems.contains(
+                                                item,
+                                              ),
+                                              visualDensity:
+                                                  VisualDensity.compact,
+                                              activeColor:
+                                                  widget.checkboxActiveColor,
+                                              checkColor:
+                                                  widget.checkboxCheckColor,
+                                              onChanged:
+                                                  _canAddMoreSelections() ||
+                                                          _selectedItems
+                                                              .contains(item)
+                                                      ? (bool? value) {
+                                                        setState(() {
+                                                          if (value == true) {
+                                                            _selectedItems.add(
+                                                              item,
+                                                            );
+                                                          } else {
+                                                            _selectedItems
+                                                                .remove(item);
+                                                          }
+                                                          _updateTextController();
+                                                          _removeOverlay();
+                                                          _showOverlay();
+                                                        });
+                                                      }
+                                                      : null,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              item.lable,
+                                              style:
+                                                  _selectedItems.contains(item)
+                                                      ? widget.selectedItemStyle
+                                                      : widget
+                                                          .dropdownItemStyle,
+                                            ),
+                                          ),
+                                          if (_selectedItems.contains(item) &&
+                                              widget.selectionIndicator != null)
+                                            widget.selectionIndicator!,
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                } else {
+                                  return InkWell(
+                                    onTap: () {
+                                      textController.text = item.value;
+                                      widget.onChanged?.call(
+                                        item.value.toString(),
+                                      );
+                                      setState(() => _isExpanded = false);
+                                      _removeOverlay();
+                                    },
+                                    child: Padding(
+                                      padding: widget.dropdownItemPadding,
+                                      child: Text(
+                                        item.lable,
+                                        style: widget.dropdownItemStyle,
+                                      ),
+                                    ),
+                                  );
+                                }
                               },
                             ),
                           ),

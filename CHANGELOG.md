@@ -28,3 +28,6 @@
 
 ## 0.1.3
 * bug fixes
+
+## 0.1.4
+* Multiselect Support

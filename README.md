@@ -23,11 +23,11 @@ A customizable Flutter widget that combines the functionality of a TextField wit
 - Pagination for large datasets
 - Customizable appearance
 - Form validation support
+- Multi-select support with customizable UI
 - **Appendable items**: Add a separate list of widgets below the dropdown with dynamic height adjustment
 
 ## Upcoming Updates
 
-- Multi-select support
 - Loading indicator for API-based searches
 - Empty state handling with customizable empty state widget
 - Additional TextField parameters support
@@ -107,6 +107,47 @@ SearchableTextField(
   ],
 )
 ```
+
+### Multi-Select Example
+
+```dart
+SearchableTextField(
+  controller: TextEditingController(),
+  enabled: true,
+  isDropdown: true,
+  isMultiSelect: true, // Enable multi-select
+  checkboxActiveColor: Colors.blue, // Customize checkbox color
+  checkboxCheckColor: Colors.white, // Customize checkbox tick color
+  selectedItemStyle: TextStyle( // Style for selected items
+    color: Colors.blue,
+    fontWeight: FontWeight.bold,
+  ),
+  maxSelections: 3, // Optional: limit number of selections
+  selectionSeparator: ' | ', // Custom separator for display
+  selectionIndicator: Icon( // Optional: custom indicator for selected items
+    Icons.check_circle_outline,
+    size: 16,
+    color: Colors.blue,
+  ),
+  items: [
+    DropdownMenuItems(lable: "Item 1", value: "1"),
+    DropdownMenuItems(lable: "Item 2", value: "2"),
+  ],
+  onChanged: (value) {
+    print("Selected values: $value");
+  },
+)
+```
+
+### Multi-Select Properties
+
+- `isMultiSelect`: Enable multi-select functionality
+- `checkboxActiveColor`: Color of the checkbox when selected
+- `checkboxCheckColor`: Color of the checkmark inside checkbox
+- `selectedItemStyle`: TextStyle for selected items in the dropdown
+- `maxSelections`: Maximum number of items that can be selected
+- `selectionSeparator`: String used to separate selected items in the textfield
+- `selectionIndicator`: Optional widget shown next to selected items
 
 ## API Reference
 
