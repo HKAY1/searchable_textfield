@@ -137,8 +137,8 @@ class _MyHomePageState extends State<MyHomePage> {
               DropdownMenuItems(lable: "Purple", value: "5"),
               DropdownMenuItems(lable: "Orange", value: "6"),
             ],
-            onChanged: (value) {
-              print('Selected colors: $value');
+            onChanged: (value, label) {
+              print('Selected value: $value, label: $label');
             },
           ),
         ],

@@ -68,8 +68,8 @@ SearchableTextField(
     DropdownMenuItems(lable: "Item 1", value: "1"),
     DropdownMenuItems(lable: "Item 2", value: "2"),
   ],
-  onChanged: (value) {
-    print("Selected value: $value");
+  onChanged: (value, label) {
+    print("Selected value: $value, label: $label");
   },
 )
 ```
@@ -133,8 +133,8 @@ SearchableTextField(
     DropdownMenuItems(lable: "Item 1", value: "1"),
     DropdownMenuItems(lable: "Item 2", value: "2"),
   ],
-  onChanged: (value) {
-    print("Selected values: $value");
+  onChanged: (value, label) {
+    print("Selected value: $value, label: $label");
   },
 )
 ```
@@ -158,7 +158,7 @@ SearchableTextField(
 - `isDropdown`: Enables dropdown functionality
 - `items`: List of predefined dropdown items
 - `getItems`: Function for API-based item fetching
-- `onChanged`: Callback for value changes
+- `onChanged`: Callback function that provides both value and label (Function(String? value, String? label)?)
 - `validator`: Form validation function
 - `isObscured`: Toggle password visibility
 - `textFeildDecorator`: Custom input decoration
@@ -200,8 +200,8 @@ SearchableTextField(
     vertical: 15,
   ),
   dropdownElevation: 4,
-  onChanged: (value) {
-    print("Selected value: $value");
+  onChanged: (value, label) {
+    print("Selected value: $value, label: $label");
   },
 )
 ```

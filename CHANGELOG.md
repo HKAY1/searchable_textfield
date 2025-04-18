@@ -31,3 +31,6 @@
 
 ## 0.1.4
 * Multiselect Support
+
+## 0.1.5
+* Minor change

@@ -23,7 +23,7 @@ class SearchableTextField<T> extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final List<DropdownMenuItems>? items;
-  final Function(String? val)? onChanged;
+  final Function(String? value, String? label)? onChanged;
   final bool enabled;
   final bool isDropdown;
   final TextStyle? style;
@@ -280,7 +280,9 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
       textController.text = _selectedItems
           .map((item) => item.lable)
           .join(widget.selectionSeparator);
-      widget.onChanged?.call(textController.text);
+      for (var item in _selectedItems) {
+        widget.onChanged?.call(item.value, item.lable);
+      }
     }
   }
 
@@ -449,7 +451,8 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                                     onTap: () {
                                       textController.text = item.value;
                                       widget.onChanged?.call(
-                                        item.value.toString(),
+                                        item.value,
+                                        item.lable,
                                       );
                                       setState(() => _isExpanded = false);
                                       _removeOverlay();
