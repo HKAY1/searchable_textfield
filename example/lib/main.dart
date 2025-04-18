@@ -46,6 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
   }
 
+  final TextEditingController controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Text("Static List Dropdown with Search"),
           SizedBox(height: 10),
           SearchableTextField(
-            controller: TextEditingController(),
+            controller: controller,
             enabled: true,
             isObscured: false,
             isDropdown: true,
@@ -76,6 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
               DropdownMenuItems(lable: "Orange", value: "5"),
               DropdownMenuItems(lable: "Blue Berry", value: "6"),
             ],
+            onChanged: (value, label) {
+              controller.text = label.toString();
+            },
             appendableItems: [
               ListTile(
                 leading: Icon(Icons.add),

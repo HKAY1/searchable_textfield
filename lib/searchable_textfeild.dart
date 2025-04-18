@@ -105,7 +105,6 @@ class SearchableTextField<T> extends StatefulWidget {
 }
 
 class _SearchableTextFieldState extends State<SearchableTextField> {
-  final TextEditingController textController = TextEditingController();
   bool _isExpanded = false;
   List<DropdownMenuItems> _filteredItems = [];
   Timer? _debouncer;
@@ -126,7 +125,6 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
   @override
   void initState() {
     super.initState();
-    textController.text = widget.controller.text;
     _scrollController = ScrollController()..addListener(_scrollListener);
 
     if (widget.isDropdown) {
@@ -145,7 +143,6 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
   @override
   void dispose() {
     _removeOverlay();
-    textController.dispose();
     _scrollController.dispose();
     _debouncer?.cancel();
     super.dispose();
@@ -277,7 +274,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
 
   void _updateTextController() {
     if (widget.isMultiSelect) {
-      textController.text = _selectedItems
+      widget.controller.text = _selectedItems
           .map((item) => item.lable)
           .join(widget.selectionSeparator);
       for (var item in _selectedItems) {
@@ -449,7 +446,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                                 } else {
                                   return InkWell(
                                     onTap: () {
-                                      textController.text = item.value;
+                                      widget.controller.text = item.value;
                                       widget.onChanged?.call(
                                         item.value,
                                         item.lable,
@@ -517,7 +514,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
-            controller: textController,
+            controller: widget.controller,
             enabled: widget.enabled,
             focusNode: widget.focusNode,
             cursorColor: widget.cursorColor,

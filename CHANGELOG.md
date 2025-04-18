@@ -34,3 +34,6 @@
 
 ## 0.1.5
 * Minor change
+
+## 0.1.6
+* TextEditing controller bug fix
