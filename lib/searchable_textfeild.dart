@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:searchable_textfeild/dropdown_menu_items.dart';
@@ -18,42 +20,217 @@ import 'package:searchable_textfeild/dropdown_menu_items.dart';
 /// TODO: Add on menu item selected callback.
 
 class SearchableTextField<T> extends StatefulWidget {
+  // API Integration
+  /// Function to fetch items from API with pagination and search support
   final Future<List<T>> Function({int? page, String? filter, int? limit})?
   getItems;
+
+  // Core Properties
+  /// Controller for managing text input
   final TextEditingController controller;
+
+  /// Form validation function
   final String? Function(String?)? validator;
+
+  /// Predefined list of dropdown items
   final List<DropdownMenuItems>? items;
+
+  /// Callback when value changes, provides both value and label
   final Function(String? value, String? label)? onChanged;
+
+  // Basic TextField Properties
+  /// Enable/disable the text field
   final bool enabled;
+
+  /// Enable dropdown functionality
   final bool isDropdown;
+
+  /// Text style for input
   final TextStyle? style;
+
+  /// Hide text (for password fields)
   final bool isObscured;
+
+  /// Focus node for controlling focus
   final FocusNode? focusNode;
+
+  /// Decoration for the text field
   final InputDecoration? textFeildDecorator;
+
+  // Text Configuration
+  /// Maximum number of lines
   final int maxLines;
+
+  /// Minimum number of lines
   final int minLines;
+
+  /// Maximum number of characters
   final int? maxLength;
+
+  /// Keyboard type (numeric, email, etc)
   final TextInputType keyboardType;
+
+  /// Input formatting rules
   final List<TextInputFormatter>? inputFormatter;
+
+  /// Character for obscured text
   final String obscuringText;
+
+  // Visual Customization
+  /// Color of the cursor
   final Color? cursorColor;
+
+  /// Custom decoration for dropdown
   final BoxDecoration? dropdownDecoration;
+
+  /// Text style for dropdown items
   final TextStyle? dropdownItemStyle;
+
+  /// Background color of dropdown
   final Color? dropdownBackgroundColor;
+
+  /// Padding for dropdown items
   final EdgeInsetsGeometry dropdownItemPadding;
+
+  /// Elevation of dropdown container
   final double? dropdownElevation;
+
+  // Loading Indicator
+  /// Custom loading widget
   final Widget? loadingWidget;
+
+  /// Color of default loading indicator
   final Color? loadingIndicatorColor;
+
+  /// Size of loading indicator
   final double loadingIndicatorSize;
+
+  /// Stroke width of loading indicator
   final double loadingIndicatorStrokeWidth;
-  final List<Widget>? appendableItems;
+
+  // Multi-select Configuration
+  /// Enable multi-select functionality
   final bool isMultiSelect;
+
+  /// Color of selected checkbox
   final Color? checkboxActiveColor;
+
+  /// Color of checkbox tick
   final Color? checkboxCheckColor;
+
+  /// Style for selected items
   final TextStyle? selectedItemStyle;
+
+  /// Maximum number of selections allowed
   final int? maxSelections;
+
+  /// Separator for selected items in text field
   final String selectionSeparator;
+
+  /// Custom indicator for selected items
   final Widget? selectionIndicator;
+
+  // Additional Features
+  /// List of widgets to show below dropdown
+  final List<Widget>? appendableItems;
+
+  // Text Alignment and Behavior
+  /// Text alignment within field
+  final TextAlign textAlign;
+
+  /// Vertical alignment of text
+  final TextAlignVertical? textAlignVertical;
+
+  /// Focus when widget is mounted
+  final bool autofocus;
+
+  /// Prevent editing
+  final bool readOnly;
+
+  /// Show cursor
+  final bool? showCursor;
+
+  /// Expand to fill height
+  final bool expands;
+
+  // Input Actions and Callbacks
+  /// Keyboard action button type
+  final TextInputAction? textInputAction;
+
+  /// Called when editing is complete
+  final VoidCallback? onEditingComplete;
+
+  /// Called when field is submitted
+  final Function(String)? onSubmitted;
+
+  /// Called when tapped outside
+  final Function()? onTapOutside;
+
+  // Advanced Features
+  /// Hints for autofill service
+  final List<String>? autofillHints;
+
+  /// Enable IME personalized learning
+  final bool enableIMEPersonalizedLearning;
+
+  /// Controller for scrolling
+  final ScrollController? scrollController;
+
+  /// Scroll physics
+  final ScrollPhysics? scrollPhysics;
+
+  /// Padding when scrolling
+  final EdgeInsets scrollPadding;
+
+  /// Enable text selection
+  final bool enableInteractiveSelection;
+
+  /// Custom selection controls
+  final TextSelectionControls? selectionControls;
+
+  /// Custom counter builder
+  final InputCounterWidgetBuilder? buildCounter;
+
+  // Selection Styling
+  /// Height style for selection
+  final BoxHeightStyle selectionHeightStyle;
+
+  /// Width style for selection
+  final BoxWidthStyle selectionWidthStyle;
+
+  /// Drag behavior
+  final DragStartBehavior dragStartBehavior;
+
+  /// Content insertion configuration
+  final ContentInsertionConfiguration? contentInsertionConfiguration;
+
+  /// Clip behavior
+  final Clip clipBehavior;
+
+  /// Enable text suggestions
+  final bool enableSuggestions;
+
+  /// Enable autocorrect
+  final bool autocorrect;
+
+  /// Smart dashes type
+  final SmartDashesType? smartDashesType;
+
+  /// Smart quotes type
+  final SmartQuotesType? smartQuotesType;
+
+  // Cursor Customization
+  /// Width of cursor
+  final double cursorWidth;
+
+  /// Height of cursor
+  final double? cursorHeight;
+
+  /// Radius of cursor
+  final Radius? cursorRadius;
+
+  /// Mouse cursor type
+  final MouseCursor? mouseCursor;
 
   const SearchableTextField({
     super.key,
@@ -95,6 +272,37 @@ class SearchableTextField<T> extends StatefulWidget {
     this.maxSelections,
     this.selectionSeparator = ', ',
     this.selectionIndicator,
+    this.textAlign = TextAlign.start,
+    this.textAlignVertical,
+    this.autofocus = false,
+    this.readOnly = false,
+    this.showCursor,
+    this.expands = false,
+    this.textInputAction,
+    this.onEditingComplete,
+    this.onSubmitted,
+    this.onTapOutside,
+    this.autofillHints,
+    this.enableIMEPersonalizedLearning = true,
+    this.scrollController,
+    this.scrollPhysics,
+    this.scrollPadding = const EdgeInsets.all(20.0),
+    this.enableInteractiveSelection = true,
+    this.selectionControls,
+    this.buildCounter,
+    this.selectionHeightStyle = BoxHeightStyle.tight,
+    this.selectionWidthStyle = BoxWidthStyle.tight,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.contentInsertionConfiguration,
+    this.clipBehavior = Clip.hardEdge,
+    this.enableSuggestions = true,
+    this.autocorrect = true,
+    this.smartDashesType,
+    this.smartQuotesType,
+    this.cursorWidth = 2.0,
+    this.cursorHeight,
+    this.cursorRadius,
+    this.mouseCursor,
   }) : assert(
          !(isDropdown && (items == null || items == const [])),
          'Items cannot be empty when isDropdown is true.',
@@ -491,7 +699,22 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                             itemCount: widget.appendableItems!.length,
                             itemExtent: appendableItemHeight,
                             itemBuilder: (context, index) {
-                              return widget.appendableItems![index];
+                              final appendableItem =
+                                  widget.appendableItems![index];
+
+                              // Wrap the appendable item to handle onTap
+                              return InkWell(
+                                onTap: () {
+                                  // First execute the original onTap if it exists
+                                  if (appendableItem is ListTile) {
+                                    appendableItem.onTap?.call();
+                                  }
+                                  // Then close the dropdown
+                                  setState(() => _isExpanded = false);
+                                  _removeOverlay();
+                                },
+                                child: appendableItem,
+                              );
                             },
                           ),
                         ),
@@ -510,47 +733,115 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextFormField(
-            controller: widget.controller,
-            enabled: widget.enabled,
-            focusNode: widget.focusNode,
-            cursorColor: widget.cursorColor,
-            style: widget.style,
-            maxLength: widget.maxLength,
-            maxLines: widget.maxLines,
-            minLines: widget.minLines,
-            obscureText: widget.isObscured,
-            decoration: widget.textFeildDecorator,
-            keyboardType: widget.keyboardType,
-            inputFormatters: widget.inputFormatter,
-            obscuringCharacter: widget.obscuringText,
-            validator: widget.validator,
-            onTap:
-                widget.isDropdown
-                    ? () {
-                      setState(() {
-                        _isExpanded = !_isExpanded;
-                        if (_isExpanded) {
-                          _filteredItems = List.from(widget.items ?? []);
-                          _page = 2;
-                          _showOverlay();
-                        } else {
-                          _removeOverlay();
-                        }
-                      });
+      child: TextFormField(
+        // Basic field properties
+        controller: widget.controller,
+        enabled: widget.enabled,
+        focusNode: widget.focusNode,
+        style: widget.style,
+
+        // Text configuration
+        maxLength: widget.maxLength, // Maximum number of characters
+        maxLines: widget.maxLines, // Maximum number of lines
+        minLines: widget.minLines, // Minimum number of lines
+        obscureText: widget.isObscured, // For password fields
+        // Input handling
+        keyboardType:
+            widget.keyboardType, // Keyboard type (numeric, email, etc)
+        inputFormatters: widget.inputFormatter, // Input validation/formatting
+        validator: widget.validator, // Form validation
+        // Visual customization
+        decoration: widget.textFeildDecorator,
+        cursorColor: widget.cursorColor,
+        obscuringCharacter: widget.obscuringText,
+        textAlign: widget.textAlign, // Text alignment within field
+        textAlignVertical: widget.textAlignVertical, // Vertical alignment
+        // Behavior settings
+        autofocus: widget.autofocus, // Focus when widget is mounted
+        readOnly: widget.readOnly, // Only force readonly for dropdown mode
+        showCursor: widget.showCursor,
+        expands: widget.expands, // Expand to fill height
+        // Input actions and callbacks
+        textInputAction: widget.textInputAction, // Keyboard action button
+        onEditingComplete: widget.onEditingComplete,
+        onFieldSubmitted: widget.onSubmitted,
+        onTapOutside: (_) => widget.onTapOutside?.call(),
+
+        // Advanced features
+        autofillHints: widget.autofillHints, // Autofill suggestions
+        enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+
+        // Scrolling behavior
+        scrollController: widget.scrollController,
+        scrollPhysics: widget.scrollPhysics,
+        scrollPadding: widget.scrollPadding,
+
+        // Selection and interaction
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        selectionControls: widget.selectionControls,
+        buildCounter: widget.buildCounter,
+        selectionHeightStyle: widget.selectionHeightStyle,
+        selectionWidthStyle: widget.selectionWidthStyle,
+
+        // Gesture and input handling
+        dragStartBehavior: widget.dragStartBehavior,
+        contentInsertionConfiguration: widget.contentInsertionConfiguration,
+        clipBehavior: widget.clipBehavior,
+
+        // Text suggestions and corrections
+        enableSuggestions:
+            widget.isDropdown
+                ? false
+                : widget
+                    .enableSuggestions, // Enable suggestions only for text mode
+        autocorrect:
+            widget.isDropdown
+                ? false
+                : widget.autocorrect, // Enable autocorrect only for text mode
+        smartDashesType:
+            widget.isDropdown
+                ? SmartDashesType.disabled
+                : widget
+                    .smartDashesType, // Enable smart dashes only for text mode
+        smartQuotesType:
+            widget.isDropdown
+                ? SmartQuotesType.disabled
+                : widget
+                    .smartQuotesType, // Enable smart quotes only for text mode
+        // Cursor customization
+        cursorWidth: widget.cursorWidth,
+        cursorHeight: widget.cursorHeight,
+        cursorRadius: widget.cursorRadius,
+        mouseCursor: widget.mouseCursor,
+
+        // Dropdown functionality
+        onTap:
+            widget.isDropdown
+                ? () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                    if (_isExpanded) {
+                      _filteredItems = List.from(widget.items ?? []);
+                      _page = 2;
+                      _showOverlay();
+                    } else {
+                      _removeOverlay();
                     }
-                    : null,
-            onChanged: (value) {
-              filter = value;
-              if (_isExpanded) {
-                _searchData();
-              }
-            },
-          ),
-        ],
+                  });
+                }
+                : null,
+        onChanged:
+            widget.isDropdown
+                ? (value) {
+                  filter = value;
+                  if (_isExpanded) {
+                    _searchData();
+                  }
+                }
+                : (value) => widget.onChanged?.call(
+                  value,
+                  value,
+                ), // Pass same value as both value and label for text mode
       ),
     );
   }

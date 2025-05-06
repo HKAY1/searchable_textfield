@@ -13,27 +13,19 @@ and the Flutter guide for
 
 # Searchable TextField
 
-A customizable Flutter widget that combines the functionality of a TextField with dropdown search capabilities.
+A highly customizable Flutter widget that combines TextField functionality with dropdown search capabilities, multi-select support, and API integration.
 
 ## Features
 
-- Standard TextField functionality
+- Standard TextField functionality with full customization
 - Dropdown with search functionality
-- API-based search support
-- Pagination for large datasets
-- Customizable appearance
+- API-based search support with pagination
+- Multi-select support with checkbox customization
+- Appendable items support
 - Form validation support
-- Multi-select support with customizable UI
-- **Appendable items**: Add a separate list of widgets below the dropdown with dynamic height adjustment
-
-## Upcoming Updates
-
-- Loading indicator for API-based searches
-- Empty state handling with customizable empty state widget
-- Additional TextField parameters support
-- Custom UI option for dropdown items
-- Improved decoration customization options
-- Performance optimizations for large datasets
+- Customizable loading indicators
+- Rich text input customization
+- Keyboard handling and input formatting
 
 ## Support My Work
 
@@ -47,23 +39,18 @@ If you find this package useful, consider supporting me with a coffee. Your supp
 
 ## Installation
 
-Add this to your package's `pubspec.yaml` file:
-
 ```yaml
 dependencies:
   searchable_textfield: ^latest_version
 ```
 
-## Usage
-
-Basic example:
+## Basic Usage
 
 ```dart
 SearchableTextField(
   controller: TextEditingController(),
   enabled: true,
   isDropdown: true,
-  isObscured: false,
   items: [
     DropdownMenuItems(lable: "Item 1", value: "1"),
     DropdownMenuItems(lable: "Item 2", value: "2"),
@@ -74,141 +61,91 @@ SearchableTextField(
 )
 ```
 
-### Appendable Items Example
-
-You can add a separate list of widgets below the dropdown using the `appendableItems` property. These widgets will be displayed in a separate section with dynamic height adjustment.
+## Multi-Select Example
 
 ```dart
 SearchableTextField(
   controller: TextEditingController(),
-  enabled: true,
   isDropdown: true,
-  isObscured: false,
-  items: [
-    DropdownMenuItems(lable: "Apple", value: "1"),
-    DropdownMenuItems(lable: "Mango", value: "2"),
-  ],
-  appendableItems: [
-    ListTile(
-      leading: Icon(Icons.add),
-      title: Text("Add New Item"),
-      onTap: () {
-        print("Add New Item tapped");
-      },
-    ),
-    Divider(),
-    ListTile(
-      leading: Icon(Icons.info),
-      title: Text("About"),
-      onTap: () {
-        print("About tapped");
-      },
-    ),
-  ],
-)
-```
-
-### Multi-Select Example
-
-```dart
-SearchableTextField(
-  controller: TextEditingController(),
-  enabled: true,
-  isDropdown: true,
-  isMultiSelect: true, // Enable multi-select
-  checkboxActiveColor: Colors.blue, // Customize checkbox color
-  checkboxCheckColor: Colors.white, // Customize checkbox tick color
-  selectedItemStyle: TextStyle( // Style for selected items
+  isMultiSelect: true,
+  checkboxActiveColor: Colors.blue,
+  checkboxCheckColor: Colors.white,
+  selectedItemStyle: TextStyle(
     color: Colors.blue,
     fontWeight: FontWeight.bold,
   ),
-  maxSelections: 3, // Optional: limit number of selections
-  selectionSeparator: ' | ', // Custom separator for display
-  selectionIndicator: Icon( // Optional: custom indicator for selected items
-    Icons.check_circle_outline,
-    size: 16,
-    color: Colors.blue,
-  ),
+  maxSelections: 3,
+  selectionSeparator: ' | ',
   items: [
     DropdownMenuItems(lable: "Item 1", value: "1"),
     DropdownMenuItems(lable: "Item 2", value: "2"),
   ],
-  onChanged: (value, label) {
-    print("Selected value: $value, label: $label");
-  },
 )
 ```
 
-### Multi-Select Properties
-
-- `isMultiSelect`: Enable multi-select functionality
-- `checkboxActiveColor`: Color of the checkbox when selected
-- `checkboxCheckColor`: Color of the checkmark inside checkbox
-- `selectedItemStyle`: TextStyle for selected items in the dropdown
-- `maxSelections`: Maximum number of items that can be selected
-- `selectionSeparator`: String used to separate selected items in the textfield
-- `selectionIndicator`: Optional widget shown next to selected items
-
-## API Reference
-
-### Main Properties
-
-- `controller`: TextEditingController for managing the text input
-- `enabled`: Enables/disables the text field
-- `isDropdown`: Enables dropdown functionality
-- `items`: List of predefined dropdown items
-- `getItems`: Function for API-based item fetching
-- `onChanged`: Callback function that provides both value and label (Function(String? value, String? label)?)
-- `validator`: Form validation function
-- `isObscured`: Toggle password visibility
-- `textFeildDecorator`: Custom input decoration
-- `dropdownDecoration`: Custom BoxDecoration for dropdown container
-- `dropdownItemStyle`: TextStyle for dropdown items
-- `dropdownBackgroundColor`: Background color of dropdown
-- `dropdownItemPadding`: Padding for dropdown items
-- `dropdownElevation`: Elevation of dropdown container
-- `loadingWidget`: Custom widget to show while loading items
-- `loadingIndicatorColor`: Color of the default loading indicator
-- `loadingIndicatorSize`: Size of the default loading indicator (default: 20)
-- `loadingIndicatorStrokeWidth`: Stroke width of the default loading indicator (default: 2)
-- `appendableItems`: A list of widgets to display in a separate section below the dropdown
-
-## Usage with Custom Styling
+## API Integration
 
 ```dart
 SearchableTextField(
   controller: TextEditingController(),
-  enabled: true,
   isDropdown: true,
-  isObscured: false,
-  items: [
-    DropdownMenuItems(lable: "Item 1", value: "1"),
-    DropdownMenuItems(lable: "Item 2", value: "2"),
-  ],
-  dropdownDecoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(8),
-    border: Border.all(color: Colors.grey),
-  ),
-  dropdownItemStyle: TextStyle(
-    color: Colors.blue,
-    fontSize: 16,
-  ),
-  dropdownBackgroundColor: Colors.grey[100],
-  dropdownItemPadding: EdgeInsets.symmetric(
-    horizontal: 20,
-    vertical: 15,
-  ),
-  dropdownElevation: 4,
-  onChanged: (value, label) {
-    print("Selected value: $value, label: $label");
+  getItems: ({page, filter, limit}) async {
+    // Your API call here
+    return yourApiResponse.map((item) => 
+      DropdownMenuItems(lable: item.name, value: item.id)
+    ).toList();
   },
+  loadingWidget: YourCustomLoadingWidget(),
 )
 ```
 
-## Contributing
+## Customization Options
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Core Properties
+- `controller`: TextEditingController for managing input
+- `enabled`: Enable/disable the field
+- `isDropdown`: Enable dropdown functionality
+- `isMultiSelect`: Enable multi-select mode
+- `validator`: Form validation function
+- `onChanged`: Callback for value changes (value, label)
+
+### Visual Customization
+- `style`: Text style for input
+- `dropdownItemStyle`: Style for dropdown items
+- `selectedItemStyle`: Style for selected items
+- `dropdownDecoration`: Custom dropdown BoxDecoration
+- `dropdownBackgroundColor`: Background color
+- `dropdownItemPadding`: Padding for items
+- `dropdownElevation`: Shadow elevation
+
+### Multi-select Options
+- `maxSelections`: Limit number of selections
+- `selectionSeparator`: Separator for selected items
+- `checkboxActiveColor`: Color when checked
+- `checkboxCheckColor`: Checkbox tick color
+- `selectionIndicator`: Custom indicator widget
+
+### Input Handling
+- `keyboardType`: Type of keyboard to display
+- `inputFormatter`: Input formatting rules
+- `textAlign`: Text alignment
+- `textAlignVertical`: Vertical alignment
+- `readOnly`: Prevent editing
+- `obscureText`: Hide input text
+- `maxLines`/`minLines`: Line constraints
+- `maxLength`: Character limit
+
+### Advanced Features
+- `autofillHints`: Autofill suggestions
+- `scrollController`: Custom scroll control
+- `scrollPhysics`: Scroll behavior
+- `enableIMEPersonalizedLearning`: IME learning
+- `cursorColor`/`cursorWidth`/`cursorRadius`: Cursor customization
+- `smartDashesType`/`smartQuotesType`: Smart text formatting
+
+## Contribution
+
+Contributions are welcome! Please feel free to submit pull requests.
 
 ## Connect with me
 

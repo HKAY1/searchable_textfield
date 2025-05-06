@@ -37,3 +37,7 @@
 
 ## 0.1.6
 * TextEditing controller bug fix
+
+## 0.1.7
+* Added TextFeild properties
+* Several bug fixes 

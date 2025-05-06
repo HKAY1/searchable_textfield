@@ -87,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 title: Text("Add New Item"),
                 onTap: () {
                   print("Add New Item tapped");
+                  // Action completes here - no need to use Navigator.pop
                 },
               ),
             ],
