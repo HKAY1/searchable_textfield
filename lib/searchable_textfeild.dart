@@ -232,6 +232,9 @@ class SearchableTextField<T> extends StatefulWidget {
   /// Mouse cursor type
   final MouseCursor? mouseCursor;
 
+  /// Callback when appendable item is tapped
+  final Function(int index)? onAppendableItemTap;
+
   const SearchableTextField({
     super.key,
     this.items = const [],
@@ -303,6 +306,7 @@ class SearchableTextField<T> extends StatefulWidget {
     this.cursorHeight,
     this.cursorRadius,
     this.mouseCursor,
+    this.onAppendableItemTap,
   }) : assert(
          !(isDropdown && (items == null || items == const [])),
          'Items cannot be empty when isDropdown is true.',
@@ -496,6 +500,52 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
         _selectedItems.length < widget.maxSelections!;
   }
 
+  Widget _buildAppendableItems(Size size) {
+    // Change parameter to Size
+    final appendableItemHeight = 48.0; // Define item height
+    final appendableContentHeight =
+        (widget.appendableItems?.length ?? 0) * appendableItemHeight;
+    final appendableMaxHeight = MediaQuery.sizeOf(context).height * 0.2;
+    final appendableActualHeight =
+        appendableContentHeight < appendableMaxHeight
+            ? appendableContentHeight
+            : appendableMaxHeight;
+
+    return Material(
+      elevation: widget.dropdownElevation ?? 4,
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        width: size.width,
+        height: appendableActualHeight,
+        decoration:
+            widget.dropdownDecoration ??
+            BoxDecoration(
+              color: widget.dropdownBackgroundColor,
+              borderRadius: BorderRadius.circular(4),
+            ),
+        child: ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: widget.appendableItems!.length,
+          itemExtent: appendableItemHeight, // Use the defined height
+          itemBuilder: (context, index) {
+            final appendableItem = widget.appendableItems![index];
+            return InkWell(
+              onTap: () {
+                if (widget.onAppendableItemTap != null) {
+                  widget.onAppendableItemTap!(index);
+                }
+                setState(() => _isExpanded = false);
+                _removeOverlay();
+              },
+              child: appendableItem,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   void _showOverlay() {
     _removeOverlay();
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -511,14 +561,14 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
             : dropdownMaxHeight;
 
     // Calculate appendable items height
-    final appendableItemHeight = 48.0; // height per appendable item
-    final appendableContentHeight =
-        (widget.appendableItems?.length ?? 0) * appendableItemHeight;
-    final appendableMaxHeight = MediaQuery.sizeOf(context).height * 0.2;
-    final appendableActualHeight =
-        appendableContentHeight < appendableMaxHeight
-            ? appendableContentHeight
-            : appendableMaxHeight;
+    // final appendableItemHeight = 48.0; // height per appendable item
+    // final appendableContentHeight =
+    //     (widget.appendableItems?.length ?? 0) * appendableItemHeight;
+    // final appendableMaxHeight = MediaQuery.sizeOf(context).height * 0.2;
+    // final appendableActualHeight =
+    //     appendableContentHeight < appendableMaxHeight
+    //         ? appendableContentHeight
+    //         : appendableMaxHeight;
 
     _overlayEntry = OverlayEntry(
       builder:
@@ -681,44 +731,7 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
                     // Appendable items section
                     if (widget.appendableItems != null &&
                         widget.appendableItems!.isNotEmpty)
-                      Material(
-                        elevation: widget.dropdownElevation ?? 4,
-                        borderRadius: BorderRadius.circular(4),
-                        clipBehavior: Clip.antiAlias,
-                        child: Container(
-                          width: size.width,
-                          height: appendableActualHeight,
-                          decoration:
-                              widget.dropdownDecoration ??
-                              BoxDecoration(
-                                color: widget.dropdownBackgroundColor,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            itemCount: widget.appendableItems!.length,
-                            itemExtent: appendableItemHeight,
-                            itemBuilder: (context, index) {
-                              final appendableItem =
-                                  widget.appendableItems![index];
-
-                              // Wrap the appendable item to handle onTap
-                              return InkWell(
-                                onTap: () {
-                                  // First execute the original onTap if it exists
-                                  if (appendableItem is ListTile) {
-                                    appendableItem.onTap?.call();
-                                  }
-                                  // Then close the dropdown
-                                  setState(() => _isExpanded = false);
-                                  _removeOverlay();
-                                },
-                                child: appendableItem,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                      _buildAppendableItems(size),
                   ],
                 ),
               ),

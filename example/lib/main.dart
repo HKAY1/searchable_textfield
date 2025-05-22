@@ -82,15 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
               controller.text = label.toString();
             },
             appendableItems: [
-              ListTile(
-                leading: Icon(Icons.add),
-                title: Text("Add New Item"),
-                onTap: () {
-                  print("Add New Item tapped");
-                  // Action completes here - no need to use Navigator.pop
-                },
-              ),
+              ListTile(leading: Icon(Icons.add), title: Text("Add New Item")),
             ],
+            onAppendableItemTap: (index) {
+              // Handle tap based on index
+              print("Appendable item $index tapped");
+              // Add your custom logic here
+            },
           ),
           SizedBox(height: 30),
           Text("Dropdown with Api Search"),

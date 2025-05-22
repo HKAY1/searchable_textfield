@@ -41,3 +41,6 @@
 ## 0.1.7
 * Added TextFeild properties
 * Several bug fixes 
+
+## 0.1.8
+* Appendable Item onTap seprated

@@ -21,7 +21,7 @@ A highly customizable Flutter widget that combines TextField functionality with 
 - Dropdown with search functionality
 - API-based search support with pagination
 - Multi-select support with checkbox customization
-- Appendable items support
+- Appendable items with custom tap handling
 - Form validation support
 - Customizable loading indicators
 - Rich text input customization
@@ -98,6 +98,47 @@ SearchableTextField(
   loadingWidget: YourCustomLoadingWidget(),
 )
 ```
+
+## Appendable Items Example
+
+```dart
+SearchableTextField(
+  controller: TextEditingController(),
+  isDropdown: true,
+  items: [
+    DropdownMenuItems(lable: "Item 1", value: "1"),
+    DropdownMenuItems(lable: "Item 2", value: "2"),
+  ],
+  appendableItems: [
+    ListTile(
+      leading: Icon(Icons.add),
+      title: Text("Add New Item"),
+    ),
+    ListTile(
+      leading: Icon(Icons.refresh),
+      title: Text("Refresh List"),
+    ),
+  ],
+  onAppendableItemTap: (index) {
+    // Handle tap on appendable items
+    switch(index) {
+      case 0: // Add New Item
+        print("Add new item tapped");
+        break;
+      case 1: // Refresh List
+        print("Refresh list tapped");
+        break;
+    }
+  },
+)
+```
+
+### Appendable Items Options
+- `appendableItems`: List of widgets to show below the dropdown
+- `onAppendableItemTap`: Callback that provides the index of tapped item
+- Supports any widget as appendable item
+- Auto-closes dropdown after tap (configurable)
+- Inherits dropdown styling (background, elevation, etc.)
 
 ## Customization Options
 
