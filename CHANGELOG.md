@@ -44,3 +44,6 @@
 
 ## 0.1.8
 * Appendable Item onTap seprated
+
+## 0.1.9
+* minor issue fixed

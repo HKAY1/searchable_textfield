@@ -232,8 +232,8 @@ class SearchableTextField<T> extends StatefulWidget {
   /// Mouse cursor type
   final MouseCursor? mouseCursor;
 
-  /// Callback when appendable item is tapped
-  final Function(int index)? onAppendableItemTap;
+  /// List of callbacks for appendable items taps
+  final List<VoidCallback>? onAppendableItemTap;
 
   const SearchableTextField({
     super.key,
@@ -532,8 +532,9 @@ class _SearchableTextFieldState extends State<SearchableTextField> {
             final appendableItem = widget.appendableItems![index];
             return InkWell(
               onTap: () {
-                if (widget.onAppendableItemTap != null) {
-                  widget.onAppendableItemTap!(index);
+                if (widget.onAppendableItemTap != null &&
+                    index < widget.onAppendableItemTap!.length) {
+                  widget.onAppendableItemTap![index]();
                 }
                 setState(() => _isExpanded = false);
                 _removeOverlay();

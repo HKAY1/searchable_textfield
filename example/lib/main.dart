@@ -83,12 +83,18 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             appendableItems: [
               ListTile(leading: Icon(Icons.add), title: Text("Add New Item")),
+              ListTile(leading: Icon(Icons.refresh), title: Text("Refresh")),
             ],
-            onAppendableItemTap: (index) {
-              // Handle tap based on index
-              print("Appendable item $index tapped");
-              // Add your custom logic here
-            },
+            onAppendableItemTap: [
+              () {
+                print("Add New Item tapped");
+                // Handle add new item
+              },
+              () {
+                print("Refresh tapped");
+                // Handle refresh
+              },
+            ],
           ),
           SizedBox(height: 30),
           Text("Dropdown with Api Search"),
